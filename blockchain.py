@@ -53,3 +53,20 @@ class Blockchain(object):
         block_string = json.dumps(block, sort_keys=True).encode()
         return hashlib.sha256(block_string).hexdigest()
 
+    # Encontre um numero P' que Hash(pP') contem 4 zeros a esquerda, onde p é o P' anterior.
+    # p é a proof anterior e P' é a nova proof.
+    # last_proof é um int e o metodo retorna um int
+    def proof_of_work(self, last_proof):
+        proof = 0
+        while self.valid_proof(last_proof, proof) is False:
+            proof += 1
+
+        return proof
+
+    # Verifica se o hash(last_proff, proof) contem 4 zeros a esquerda
+    # Os parametros sao int e o metodo retorna um booelan
+    @staticmethod
+    def valid_proof(last_proof, proof):
+        guess = f'{last_proof}{proof}'.encode()
+        guess_hash = hashlib.sha256(guess).hexdigest()
+        return guess_hash[:4] == "0000"
